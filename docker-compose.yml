@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  producer:
+    build: ./producer
+    ports:
+      - 33000:33000
+    restart: on-failure
+    environment:
+      POSTGRES_HOST: database
+    links:
+      - database
+      - rabbitmq
+      - consumer
+  consumer:
+    build: ./consumer
+    ports:
+      - 34000:34000
+    restart: on-failure
+    environment:
+      POSTGRES_HOST: database
+    links:
+      - database
+      - rabbitmq
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+  database:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - 5432:5432
