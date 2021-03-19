@@ -14,8 +14,6 @@ services:
       - consumer
   consumer:
     build: ./consumer
-    ports:
-      - 34000:34000
     restart: on-failure
     environment:
       POSTGRES_HOST: database

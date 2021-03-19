@@ -12,9 +12,8 @@ import java.util.UUID;
 public class Command implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long number;
+    private Integer number;
     private Integer capacity;
 }

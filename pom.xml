@@ -6,9 +6,8 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.example</groupId>
-    <artifactId>tech-task</artifactId>
+    <artifactId>spring-rabbitmq</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>tech-task</name>
 
     <packaging>pom</packaging>
 

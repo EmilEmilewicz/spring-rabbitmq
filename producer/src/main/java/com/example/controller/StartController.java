@@ -1,20 +1,24 @@
 package com.example.controller;
 
 import com.example.entity.Command;
+import com.example.exception.CommandToJsonException;
 import com.example.service.CommandService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 import static com.example.config.RabbitConfig.QUEUE_MESSAGE;
 import static com.example.config.RabbitConfig.TOPIC_EXCHANGE_NAME;
 
+@Slf4j
 @RestController
 public class StartController {
 
@@ -28,36 +32,33 @@ public class StartController {
     @GetMapping("/start")
     public void start() {
 
-        System.out.println("started");
-        System.out.println("Sending message...");
+        log.info("Started. Time -> {}.", System.currentTimeMillis());
+        log.info("Sending messages...");
 
-        for (long i = 0; i < 100; i++) {
+        IntStream.range(0, 100)
+                .forEachOrdered(i -> sendCommand(createAndPersist(i)));
 
-            Command command = new Command();;
-            command.setCapacity(ThreadLocalRandom.current().nextInt(3, 7));
-            command.setNumber(i);
-
-            Command saveCommand = commandService.save(command);
-
-            try {
-
-                String commandJson = objectMapper.writeValueAsString(saveCommand);
-                rabbitTemplate.convertAndSend(TOPIC_EXCHANGE_NAME, QUEUE_MESSAGE, commandJson);
-
-                sleep(command.getCapacity());
-
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        }
-
-        System.out.println("finished");
+        log.info("finished");
     }
 
-    private void sleep(int seconds) {
+    private Command createAndPersist(int number) {
+
+        Command command = new Command();
+        command.setCapacity(ThreadLocalRandom.current().nextInt(3, 7));
+        command.setNumber(number);
+
+        return commandService.save(command);
+    }
+
+    private void sendCommand(Command command) {
         try {
-            Thread.sleep(seconds);
-        } catch (InterruptedException ignored) {
+            String commandJson = objectMapper.writeValueAsString(command);
+            rabbitTemplate.convertAndSend(TOPIC_EXCHANGE_NAME, QUEUE_MESSAGE, commandJson);
+
+            log.info("{}", commandJson);
+
+        } catch (JsonProcessingException e) {
+            throw new CommandToJsonException(e.getMessage());
         }
     }
 }
