@@ -10,13 +10,12 @@ databaseChangeLog:
       author: asadganiev
       changes:
         - sql:
+            dbms: 'postgresql'
             endDelimiter: \nGO
             splitStatements: true
             sql: >
               CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
             stripComments: true
-        - tagDatabase:
-            tag: 1.0
       rollback:
         - sql:
             sql: >

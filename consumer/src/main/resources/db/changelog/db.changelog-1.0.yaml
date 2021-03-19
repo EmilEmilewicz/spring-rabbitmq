@@ -10,6 +10,7 @@ databaseChangeLog:
       author: asadganiev
       changes:
         - sql:
+            dbms: 'postgresql'
             endDelimiter: \nGO
             splitStatements: true
             sql: >

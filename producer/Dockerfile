@@ -22,5 +22,6 @@ RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
 ENV MAVEN_HOME /usr/share/maven
 
 RUN mvn install
+RUN mvn liquibase:rollback -Dliquibase.rollbackTag="producer-1.0"
 RUN mvn liquibase:update
 RUN mvn spring-boot:run
