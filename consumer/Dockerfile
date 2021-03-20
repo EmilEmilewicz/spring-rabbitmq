@@ -3,7 +3,7 @@ FROM bellsoft/liberica-openjdk-alpine:11
 VOLUME ~/.m2 /root/.m2
 COPY src        /root/src
 COPY pom.xml    /root/pom.xml
-COPY src/main/resources/entrypoint.sh    /root/entrypoint.sh
+#COPY src/main/resources/entrypoint.sh    /usr/bin/entrypoint.sh
 
 RUN apk add --update \
     curl \

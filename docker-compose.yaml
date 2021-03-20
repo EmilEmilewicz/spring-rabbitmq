@@ -3,10 +3,9 @@ version: "3.8"
 services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
-    container_name: rabbitmq
     environment:
-      RABBITMQ_DEFAULT_USER: rabbitmq
-      RABBITMQ_DEFAULT_PASS: rabbitmq
+      RABBITMQ_DEFAULT_USER: rabbit
+      RABBITMQ_DEFAULT_PASS: rabbit
     ports:
       - 5672:5672
       - 15672:15672
@@ -17,7 +16,6 @@ services:
       retries: 3
   db:
     image: postgres
-    container_name: db
     restart: always
     environment:
       POSTGRES_DB: postgres
@@ -42,7 +40,7 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    entrypoint: [ "entrypoint.sh" ]
+    entrypoint: mvn spring-boot:run
   consumer:
     build: ./consumer
     restart: on-failure
@@ -51,4 +49,4 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    entrypoint: [ "entrypoint.sh" ]
+    entrypoint: mvn spring-boot:run
