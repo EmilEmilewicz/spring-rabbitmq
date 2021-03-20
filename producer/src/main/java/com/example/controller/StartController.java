@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
@@ -22,13 +23,13 @@ public class StartController {
     @GetMapping("/start")
     public void start() {
 
-        log.info("Started. Time -> {}.", System.currentTimeMillis());
-        log.info("Sending messages...");
+        log.info("Started. Time -> {}.", LocalDateTime.now());
+        log.info("Sending messages... Time -> {}.", LocalDateTime.now());
 
         IntStream.range(0, 100)
                 .forEachOrdered(i -> commandService.sendCommand(createAndPersist(i)));
 
-        log.info("finished");
+        log.info("Finished. Time -> {}", LocalDateTime.now());
     }
 
     private Command createAndPersist(int number) {

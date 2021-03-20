@@ -9,10 +9,10 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "commands")
-public class Command implements Serializable {
+public class Command {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private Integer number;
     private Integer capacity;

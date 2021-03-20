@@ -33,6 +33,8 @@ public class Receiver {
 
     public void receiveMessage(String command) {
 
+        log.info("Received command {}.", command);
+
         Command cmd = toCommand(command);
 
         if (!Objects.isNull(cmd)) {

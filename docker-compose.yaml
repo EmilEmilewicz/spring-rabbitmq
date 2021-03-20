@@ -40,7 +40,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    entrypoint: mvn spring-boot:run
+    entrypoint: >
+      sh -c "mvn spring-boot:run"
   consumer:
     build: ./consumer
     restart: on-failure
@@ -49,4 +50,5 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    entrypoint: mvn spring-boot:run
+    entrypoint: >
+      sh -c "mvn spring-boot:run"
