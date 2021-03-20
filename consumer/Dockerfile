@@ -1,7 +1,9 @@
 FROM bellsoft/liberica-openjdk-alpine:11
 
-COPY src        /src
-COPY pom.xml    /pom.xml
+VOLUME ~/.m2 /root/.m2
+COPY src        /root/src
+COPY pom.xml    /root/pom.xml
+COPY src/main/resources/entrypoint.sh    /root/entrypoint.sh
 
 RUN apk add --update \
     curl \
@@ -22,6 +24,3 @@ RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
 ENV MAVEN_HOME /usr/share/maven
 
 RUN mvn install
-RUN mvn liquibase:rollback -Dliquibase.rollbackTag="consumer-1.0"
-RUN mvn liquibase:update
-RUN mvn spring-boot:run
