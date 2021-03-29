@@ -38,7 +38,7 @@ public class EventService {
     public Event newEvent(Command cmd, EventType eventType) {
 
         Event event = new Event();
-        event.setContext("context-" + cmd.getId());
+        event.setContext(cmd.getId().toString());
         event.setTime(LocalDateTime.now());
         event.setType(eventType);
 
