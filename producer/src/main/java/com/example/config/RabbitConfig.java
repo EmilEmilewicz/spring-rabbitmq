@@ -11,16 +11,4 @@ public class RabbitConfig {
 
     public static final String QUEUE_MESSAGE = "COMMANDS";
     public static final String TOPIC_EXCHANGE_NAME = "ach-team";
-
-    /*@Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(producerJackson2MessageConverter());
-        return rabbitTemplate;
-    }
-
-    @Bean
-    public Jackson2JsonMessageConverter producerJackson2MessageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }*/
 }

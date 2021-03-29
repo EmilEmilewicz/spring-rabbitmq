@@ -6,6 +6,7 @@ import com.example.entity.EventType;
 import com.example.service.EventService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
@@ -19,18 +20,13 @@ import static com.example.entity.EventType.START;
 
 @Slf4j
 @Component
+@AllArgsConstructor
 public class Receiver {
 
     private final ObjectMapper mapper;
     private final EventService eventService;
 
-    public Receiver(ObjectMapper mapper, EventService eventService) {
-        this.mapper = mapper;
-        this.eventService = eventService;
-    }
-
     @RabbitListener(queues = QUEUE_MESSAGE)
-
     public void receiveMessage(String command) {
 
         log.info("Received command {}.", command);

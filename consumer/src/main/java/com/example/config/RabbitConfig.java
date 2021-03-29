@@ -17,7 +17,7 @@ import org.springframework.messaging.handler.annotation.support.DefaultMessageHa
 import org.springframework.messaging.handler.annotation.support.MessageHandlerMethodFactory;
 
 @Configuration
-public class RabbitConfig /*implements RabbitListenerConfigurer*/ {
+public class RabbitConfig {
 
     public static final String QUEUE_MESSAGE = "COMMANDS";
     public static final String TOPIC_EXCHANGE_NAME = "ach-team";
@@ -54,21 +54,4 @@ public class RabbitConfig /*implements RabbitListenerConfigurer*/ {
     MessageListenerAdapter listenerAdapter(Receiver receiver) {
         return new MessageListenerAdapter(receiver, "receiveMessage");
     }
-
-    /*@Override
-    public void configureRabbitListeners(RabbitListenerEndpointRegistrar registrar) {
-        registrar.setMessageHandlerMethodFactory(messageHandlerMethodFactory());
-    }
-
-    @Bean
-    MessageHandlerMethodFactory messageHandlerMethodFactory() {
-        var messageHandlerMethodFactory = new DefaultMessageHandlerMethodFactory();
-        messageHandlerMethodFactory.setMessageConverter(consumerJackson2MessageConverter());
-        return messageHandlerMethodFactory;
-    }
-
-    @Bean
-    public MappingJackson2MessageConverter consumerJackson2MessageConverter() {
-        return new MappingJackson2MessageConverter();
-    }*/
 }
