@@ -33,7 +33,7 @@ public class Receiver {
 
         eventService.process(cmd, event);
 
-        event = eventService.finish(event);
+        event = eventService.finish(cmd);
 
         log.info("Event finished. Event id - {}, type - {}, time - {}, context - {}.",
                 event.getId(), event.getType(), event.getTime(), event.getContext());

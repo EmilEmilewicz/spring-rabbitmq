@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
+import static com.example.entity.EventType.FINISH;
 import static com.example.entity.EventType.START;
 
 @Service
@@ -29,11 +30,9 @@ public class EventService {
         return save(newEvent(command, START));
     }
 
-    public Event finish(Event event) {
+    public Event finish(Command command) {
 
-        event.setType(EventType.FINISH);
-
-        return save(event);
+        return save(newEvent(command, FINISH));
     }
 
     public Event newEvent(Command cmd, EventType eventType) {
