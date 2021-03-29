@@ -3,12 +3,11 @@ package com.example.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "commands")
+@Table(name = "command")
 public class Command {
 
     @Id

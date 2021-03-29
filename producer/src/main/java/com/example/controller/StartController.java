@@ -1,14 +1,14 @@
 package com.example.controller;
 
-import com.example.entity.Command;
+import com.example.entity.MessageEvent;
 import com.example.service.CommandService;
+import com.example.service.MessageEventService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
 @Slf4j
@@ -17,25 +17,22 @@ import java.util.stream.IntStream;
 public class StartController {
 
     private final CommandService commandService;
+    private final MessageEventService messageEventService;
 
     @GetMapping("/start")
-    public void start() {
+    public ResponseEntity<String> start() {
 
-        log.info("Started. Time -> {}.", LocalDateTime.now());
-        log.info("Sending messages... Time -> {}.", LocalDateTime.now());
+        MessageEvent event = messageEventService.start();
+
+        log.info("Started. Time -> {}.", event.getSendMessageToQueueStart());
+        log.info("Sending messages... Time -> {}.", event.getSendMessageToQueueStart());
 
         IntStream.range(0, 100)
-                .forEachOrdered(i -> commandService.sendCommand(createAndPersist(i)));
+                .forEachOrdered(commandService::sendCommand);
 
-        log.info("Finished. Time -> {}", LocalDateTime.now());
-    }
+        event = messageEventService.finish(event);
+        log.info("Finished. Time -> {}", event.getSendMessageToQueueFinish());
 
-    private Command createAndPersist(int number) {
-
-        Command command = new Command();
-        command.setCapacity(ThreadLocalRandom.current().nextInt(3, 7));
-        command.setNumber(number);
-
-        return commandService.save(command);
+        return ResponseEntity.ok("Success!!!");
     }
 }

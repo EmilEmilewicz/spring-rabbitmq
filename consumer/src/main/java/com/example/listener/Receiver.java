@@ -2,73 +2,40 @@ package com.example.listener;
 
 import com.example.dto.Command;
 import com.example.entity.Event;
-import com.example.entity.EventType;
+import com.example.service.CommandService;
 import com.example.service.EventService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
-
-import static com.example.config.RabbitConfig.QUEUE_MESSAGE;
-import static com.example.entity.EventType.FINISH;
-import static com.example.entity.EventType.START;
 
 @Slf4j
 @Component
 @AllArgsConstructor
 public class Receiver {
 
-    private final ObjectMapper mapper;
     private final EventService eventService;
+    private final CommandService commandService;
 
-    @RabbitListener(queues = QUEUE_MESSAGE)
+    @RabbitListener(queues = "${rabbit.queue.message}")
     public void receiveMessage(String command) {
 
         log.info("Received command {}.", command);
 
-        Command cmd = toCommand(command);
+        Command cmd = commandService.toCommand(command);
 
-        if (!Objects.isNull(cmd)) {
+        Event event = eventService.start(cmd);
 
-            Event start = eventService.save(newEvent(cmd, START));
+        log.info("Event started. Event id - {}, type - {}, time - {}, context - {}.",
+                event.getId(), event.getType(), event.getTime(), event.getContext());
 
-            log.info("start -> {}", start);
+        log.info("Event processing...");
 
-            sleep(cmd);
+        eventService.process(cmd, event);
 
-            Event finish = eventService.save(newEvent(cmd, FINISH));
+        event = eventService.finish(event);
 
-            log.info("finish -> {}", finish);
-        }
-    }
-
-    private void sleep(Command cmd) {
-        try {
-            Thread.sleep(cmd.getCapacity() * 1000);
-        } catch (InterruptedException ignored) {
-        }
-    }
-
-    private Command toCommand(String command) {
-        try {
-            return mapper.readValue(command, Command.class);
-        } catch (JsonProcessingException ignored) {
-        }
-        return null;
-    }
-
-    private Event newEvent(Command cmd, EventType eventType) {
-
-        Event event = new Event();
-        event.setContext("context-" + cmd.getId());
-        event.setTime(LocalDateTime.now());
-        event.setType(eventType);
-
-        return event;
+        log.info("Event finished. Event id - {}, type - {}, time - {}, context - {}.",
+                event.getId(), event.getType(), event.getTime(), event.getContext());
     }
 }

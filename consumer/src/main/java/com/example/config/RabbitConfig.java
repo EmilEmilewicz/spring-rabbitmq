@@ -5,46 +5,46 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.annotation.RabbitListenerConfigurer;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
-import org.springframework.messaging.handler.annotation.support.MessageHandlerMethodFactory;
 
 @Configuration
 public class RabbitConfig {
 
-    public static final String QUEUE_MESSAGE = "COMMANDS";
-    public static final String TOPIC_EXCHANGE_NAME = "ach-team";
-
     @Bean
-    Queue queue() {
-        return new Queue(QUEUE_MESSAGE, true);
+    TopicExchange exchange(@Value("${rabbit.topic.message}") String topicName) {
+        System.out.println("topicName = " + topicName);
+        return new TopicExchange(topicName);
     }
 
     @Bean
-    TopicExchange exchange() {
+    Queue queue(@Value("${rabbit.queue.message}") String queueName) {
 
-        return new TopicExchange(TOPIC_EXCHANGE_NAME);
+        System.out.println("queueName = " + queueName);
+        return new Queue(queueName, true);
     }
 
     @Bean
-    Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(QUEUE_MESSAGE);
+    Binding binding(@Value("${rabbit.queue.message}") String queueName,
+                    Queue queue, TopicExchange exchange) {
+
+        System.out.println(
+                "queueName = " + queueName + ", queue = " + queue + ", exchange = " + exchange);
+        return BindingBuilder.bind(queue).to(exchange).with(queueName);
     }
 
     @Bean
-    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory,
+    SimpleMessageListenerContainer container(@Value("${rabbit.queue.message}") String queueName,
+                                             ConnectionFactory connectionFactory,
                                              MessageListenerAdapter listenerAdapter) {
 
         var container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.setQueueNames(QUEUE_MESSAGE);
+        container.setQueueNames(queueName);
         container.setMessageListener(listenerAdapter);
 
         return container;

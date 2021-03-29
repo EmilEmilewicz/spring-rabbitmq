@@ -5,38 +5,59 @@ import com.example.exception.CommandToJsonException;
 import com.example.repository.CommandRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import static com.example.config.RabbitConfig.QUEUE_MESSAGE;
-import static com.example.config.RabbitConfig.TOPIC_EXCHANGE_NAME;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @Service
-@AllArgsConstructor
 public class CommandService {
 
-    private final RabbitTemplate rabbitTemplate;
-    private final ObjectMapper objectMapper;
-    private final CommandRepository commandRepository;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private CommandRepository commandRepository;
+    @Value("${rabbit.topic.message}")
+    private String topicName;
+    @Value("${rabbit.queue.message}")
+    private String queueMessage;
 
     public Command save(Command command) {
 
         return commandRepository.save(command);
     }
 
-    public void sendCommand(Command command) {
+    public void sendCommand(int commandNumber) {
+
+        Command cmd = createAndPersist(commandNumber);
+        String commandJson = toJson(cmd);
+
+        rabbitTemplate.convertAndSend(topicName, queueMessage, commandJson);
+
+        log.info("Command -> {} sent.", commandJson);
+    }
+
+    private String toJson(Command command) {
 
         try {
-            String commandJson = objectMapper.writeValueAsString(command);
-            rabbitTemplate.convertAndSend(TOPIC_EXCHANGE_NAME, QUEUE_MESSAGE, commandJson);
-
-            log.info("{}", commandJson);
-
+            return objectMapper.writeValueAsString(command);
         } catch (JsonProcessingException e) {
             throw new CommandToJsonException(e.getMessage());
         }
+    }
+
+    public Command createAndPersist(int number) {
+
+        Command command = new Command();
+        command.setCapacity(ThreadLocalRandom.current().nextInt(3, 7));
+        command.setNumber(number);
+
+        return save(command);
     }
 }
