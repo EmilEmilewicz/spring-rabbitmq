@@ -7,8 +7,8 @@ services:
       RABBITMQ_DEFAULT_USER: rabbit
       RABBITMQ_DEFAULT_PASS: rabbit
     ports:
-      - 5672
-      - 15672
+      - 5672:5672
+      - 15672:15672
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 30s
@@ -31,7 +31,7 @@ services:
   producer:
     build: ./producer
     ports:
-      - 33000
+      - 33000:33000
     restart: on-failure
     environment:
       POSTGRES_HOST: database
