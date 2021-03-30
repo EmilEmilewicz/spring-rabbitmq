@@ -11,10 +11,22 @@ import java.util.UUID;
 @Table(name = "event")
 public class Event {
 
+    /**
+     * Randomly generated id. Format UUID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    /**
+     * Event type START | FINISH
+     */
     private EventType type;
+    /**
+     * Time of creation of the event
+     */
     private LocalDateTime time;
-    private String context;
+    /**
+     * It is command id.
+     */
+    private UUID context;
 }

@@ -28,11 +28,22 @@ public class CommandService {
     @Value("${rabbit.queue.message}")
     private String queueMessage;
 
+    /**
+     * Saving an Command to the DB
+     *
+     * @param command the one should be saved
+     * @return saved to the DB Command
+     */
     public Command save(Command command) {
 
         return commandRepository.save(command);
     }
 
+    /**
+     * Sending command to the RabbitMQ
+     *
+     * @param commandNumber sequential number of the Command
+     */
     public void sendCommand(int commandNumber) {
 
         Command cmd = createAndPersist(commandNumber);
@@ -43,6 +54,12 @@ public class CommandService {
         log.info("Command -> {} sent.", commandJson);
     }
 
+    /**
+     * Converts Command to the JSON String format
+     *
+     * @param command that should converted to String
+     * @return Command JSON String format
+     */
     private String toJson(Command command) {
 
         try {
@@ -52,11 +69,17 @@ public class CommandService {
         }
     }
 
-    public Command createAndPersist(int number) {
+    /**
+     * Creating and persisting Command to the DB
+     *
+     * @param commandNumber
+     * @return Command that stored in DB after creation
+     */
+    public Command createAndPersist(int commandNumber) {
 
         Command command = new Command();
         command.setCapacity(ThreadLocalRandom.current().nextInt(3, 7));
-        command.setNumber(number);
+        command.setNumber(commandNumber);
 
         return save(command);
     }

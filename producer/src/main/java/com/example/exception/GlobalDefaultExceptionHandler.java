@@ -1,18 +1,31 @@
 package com.example.exception;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Arrays;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
+@Slf4j
 @ControllerAdvice
 class GlobalDefaultExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
-    @ResponseBody
-    public ResponseEntity<String> defaultErrorHandler(Exception e) {
-        return new ResponseEntity<>(e.getMessage(), INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ErrorMessage> defaultErrorHandler(Exception e) {
+
+        log.error("{}", Arrays.toString(e.getStackTrace()));
+
+        return ResponseEntity
+                .status(INTERNAL_SERVER_ERROR)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(ErrorMessage.builder()
+                        .type("error")
+                        .message(e.getMessage())
+                        .build()
+                );
     }
 }

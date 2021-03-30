@@ -18,7 +18,7 @@ public class Receiver {
     private final CommandService commandService;
 
     @RabbitListener(queues = "${rabbit.queue.message}")
-    public void receiveMessage(String command) {
+    public void receive(String command) {
 
         log.info("Received command {}.", command);
 

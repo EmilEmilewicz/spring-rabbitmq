@@ -13,6 +13,12 @@ public class CommandService {
 
     private final ObjectMapper mapper;
 
+    /**
+     * Mapping String json to Object
+     *
+     * @param command json
+     * @return Command
+     */
     public Command toCommand(String command) {
         try {
             return mapper.readValue(command, Command.class);

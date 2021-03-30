@@ -13,6 +13,12 @@ public class MessageEventService {
 
     private final MessageEventRepository messageEventRepository;
 
+    /**
+     * Creates new Message event,
+     * sets the start time and stores to the database
+     *
+     * @return newly created and stored to the DB MessageEvent
+     */
     public MessageEvent start() {
         return messageEventRepository.save(
                 MessageEvent.builder()
@@ -20,6 +26,12 @@ public class MessageEventService {
                         .build());
     }
 
+    /**
+     * Updates finish time of the MessageEvent
+     *
+     * @param event which should be finished and persisted
+     * @return updated MessageEvent
+     */
     public MessageEvent finish(MessageEvent event) {
 
         event.setSendMessageToQueueFinish(LocalDateTime.now());

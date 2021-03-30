@@ -17,14 +17,11 @@ public class RabbitConfig {
 
     @Bean
     TopicExchange exchange(@Value("${rabbit.topic.message}") String topicName) {
-        System.out.println("topicName = " + topicName);
         return new TopicExchange(topicName);
     }
 
     @Bean
     Queue queue(@Value("${rabbit.queue.message}") String queueName) {
-
-        System.out.println("queueName = " + queueName);
         return new Queue(queueName, true);
     }
 
@@ -32,8 +29,6 @@ public class RabbitConfig {
     Binding binding(@Value("${rabbit.queue.message}") String queueName,
                     Queue queue, TopicExchange exchange) {
 
-        System.out.println(
-                "queueName = " + queueName + ", queue = " + queue + ", exchange = " + exchange);
         return BindingBuilder.bind(queue).to(exchange).with(queueName);
     }
 
@@ -52,6 +47,6 @@ public class RabbitConfig {
 
     @Bean
     MessageListenerAdapter listenerAdapter(Receiver receiver) {
-        return new MessageListenerAdapter(receiver, "receiveMessage");
+        return new MessageListenerAdapter(receiver, "receive");
     }
 }

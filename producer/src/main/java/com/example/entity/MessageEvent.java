@@ -12,11 +12,22 @@ import java.time.LocalDateTime;
 @Builder
 public class MessageEvent {
 
+    /**
+     * Id with auto increment
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    /**
+     * Fixating start time of the sending commands
+     * to the RabbitMQ Queue
+     */
     @Column(name = "SEND_MESSAGES_TO_QUEUE_START")
     private LocalDateTime sendMessageToQueueStart;
+    /**
+     * Fixating finish time of the sending commands
+     * to the RabbitMQ Queue
+     */
     @Column(name = "SEND_MESSAGES_TO_QUEUE_FINISH")
     private LocalDateTime sendMessageToQueueFinish;
 }
